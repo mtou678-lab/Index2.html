@@ -1,2 +1,2 @@
-# Index2.html
+# Index.html
 Add main game file.
