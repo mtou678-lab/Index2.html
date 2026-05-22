@@ -6,13 +6,14 @@
     <title>SINU Syndicate - غرفة العمليات والنجاة حية</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" type="text/javascript"></script>
     <style>
-        body { backgroundColor: "#0b0c10"; background-image: linear-gradient(rgba(11, 12, 16, 0.95), rgba(11, 12, 16, 0.95)), url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; background-attachment: fixed; color: #c5c6c7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 15px; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
-        .container { max-width: "520px"; width: 100%; max-width: 520px; background: rgba(26, 34, 46, 0.97); padding: 25px; borderRadius: "20px"; border-radius: 20px; box-shadow: 0 0 40px rgba(102, 252, 241, 0.3); border: 1px solid #66fcf1; backdrop-filter: blur(10px); box-sizing: border-box; }
-        h1 { color: #66fcf1; fontSize: "36px"; font-size: 36px; margin: 5px 0; text-shadow: 0 0 15px #66fcf1; fontWeight: 900; text-align: center; }
-        .subtitle { color: #45f3ff; fontSize: "13px"; font-size: 13px; margin-bottom: 20px; font-weight: bold; text-align: center; }
+        body { background-color: #0b0c10; background-image: linear-gradient(rgba(11, 12, 16, 0.95), rgba(11, 12, 16, 0.95)), url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; background-attachment: fixed; color: #c5c6c7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 15px; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+        .container { width: 100%; max-width: 520px; background: rgba(26, 34, 46, 0.97); padding: 25px; border-radius: 20px; box-shadow: 0 0 40px rgba(102, 252, 241, 0.3); border: 1px solid #66fcf1; backdrop-filter: blur(10px); box-sizing: border-box; }
+        h1 { color: #66fcf1; font-size: 36px; margin: 5px 0; text-shadow: 0 0 15px #66fcf1; font-weight: 900; text-align: center; }
+        .subtitle { color: #45f3ff; font-size: 13px; margin-bottom: 20px; font-weight: bold; text-align: center; }
         .btn { background: linear-gradient(135deg, #1f4068, #162447); color: white; border: 2px solid #66fcf1; padding: 12px 10px; font-size: 14px; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%; box-sizing: border-box; transition: all 0.25s ease; margin-bottom: 10px; }
         .btn-large { padding: 15px 20px; font-size: 16px; margin-bottom: 12px; }
-        .btn-connect { background: linear-gradient(135deg, #00b894, #00876c); borderColor: "#00b894"; border-color: #00b894; }
+        .btn-connect { background: linear-gradient(135deg, #00b894, #00876c); border-color: #00b894; }
+        .btn-approve { background: linear-gradient(135deg, #e67e22, #d35400); border-color: #e67e22; }
         .btn-pvp { background: linear-gradient(135deg, #8e44ad, #4a148c); border-color: #8e44ad; }
         .btn-pve { background: linear-gradient(135deg, #2980b9, #1f4068); border-color: #2980b9; }
         .btn-kill { background: linear-gradient(135deg, #e43f5a, #750517); border-color: #e43f5a; padding: 15px; font-size: 15px; }
@@ -43,6 +44,8 @@
 
     <div id="startScreen">
         <button class="btn btn-large btn-connect" id="connectWalletBtn" onclick="connectWallet()">🔗 تشفير الهوية الرقمية وربط المحفظة</button>
+        <button class="btn btn-large btn-approve" id="approveBtn" onclick="approveSinuToken()">🔓 تفعيل قفل الأمان وصلاحية الحرق ($SINU)</button>
+        
         <div style="margin: 25px 0 12px 0; font-weight: bold; color: #66fcf1; text-align: center; font-size: 14px;">🕵️‍♂️ اختر ملفك الأمني لدخول المنظمة:</div>
         <button class="btn btn-large btn-pvp" onclick="enterHub('PVP')">⚔️ ساحة تصفية الحسابات الحية (طور PvP)</button>
         <button class="btn btn-large btn-pve" onclick="enterHub('PVE')">🦅 إرث روبرت راث - مغامرة النجاة (طور PvE)</button>
@@ -73,7 +76,7 @@
         </div>
 
         <div class="story-screen">
-            <img id="screenImg" src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80" alt="غرفة العمليات">
+            <img id="screenImg" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80" alt="غرفة العمليات">
             <div id="overlayLabel" class="screen-overlay-text">كاميرا المقر: النفق السفلي الرئيسي - تمركز القاتل الأول وشريكته</div>
         </div>
 
@@ -105,9 +108,8 @@
 </div>
 
 <script>
-    // 1. الإعدادات الموثقة لعقودك الذكية (تأكد من مطابقة العناوين)
-    const CONTRACT_ADDRESS = "0x3E71427c4F4c3aE6DBA472Ccb17076E2148A1231"; // عقد اللعبة في Remix
-    const SINU_TOKEN_ADDRESS = "0x56bB247c424958948B63de291A0C7f45d8651B76"; // ⚠️ ضع هنا عنوان توكن $SINU الخاص بك إذا كان مختلفاً عن عقد اللعبة
+    const CONTRACT_ADDRESS = "0x3E71427c4F4c3aE6DBA472Ccb17076E2148A1231"; 
+    const SINU_TOKEN_ADDRESS = "0x56bB247c424958948B63de291A0C7f45d8651B76"; 
 
     const CONTRACT_ABI = [
         {"inputs":[{"internalType":"address","name":"_sinuTokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
@@ -120,7 +122,6 @@
     let walletAddress = null;
     let health = 100; let armor = 100; let heat = 10; let totalBurned = 145230;
 
-    // 2. دالة الاتصال المحدثة لقراءة الشبكة وحالة الربط
     async function connectWallet() {
         if (window.ethereum) {
             try {
@@ -133,21 +134,18 @@
 
                 document.getElementById("connectWalletBtn").innerText = `✅ الهوية مشفرة: ${walletAddress.substring(0, 10)}...`;
                 document.getElementById("connectWalletBtn").style.background = "#00876c";
-                document.getElementById("statusBox").innerText = `🔗 متصل حياً بالبلوكشين! الشبكة الحالية (ChainID): ${chainId}.`;
-                
-                enterHub('PVE'); 
+                alert("🔗 تم ربط محفظتك بنجاح! تذكر تفعيل قفل الأمان أولاً قبل دخول طور اللعب.");
             } catch (e) {
                 alert("تم رفض التوقيع وتفعيل المحفظة.");
             }
         } else {
-            alert("⚠️ لم يتم رصد أي محفظة مشفرة! يرجى فتح هذا الرابط من داخل متصفح تطبيق Trust Wallet.");
+            alert("⚠️ لم يتم رصد أي محفظة مشفرة! يرجى فتح هذا الرابط من داخل متصفح تطبيق Trust Wallet أو MetaMask.");
         }
     }
 
-    // 3. ⭐️ الدالة الجديدة: منح صلاحية السحب والحرق لعقد اللعبة (تُنفذ مرة واحدة فقط)
     async function approveSinuToken() {
         if (!window.ethereum || !walletAddress) {
-            alert("يرجى ربط المحفظة أولاً بتشفيير الهوية!");
+            alert("يرجى ربط المحفظة أولاً بتشفير الهوية!");
             return;
         }
         try {
@@ -159,25 +157,22 @@
             ];
             
             const tokenContract = new ethers.Contract(SINU_TOKEN_ADDRESS, erc20Abi, signer);
-            document.getElementById("statusBox").innerText = "⏳ جاري طلب صلاحية حركة توكنات $SINU... يرجى تأكيد العملية من محفظتك لفتح القفل أمان البلوكشين.";
-
-            // منح صلاحية لـ 100 مليون توكن حتى لا يطلبها العقد مرة أخرى
             const amountToApprove = ethers.utils.parseUnits("100000000", 18); 
             
             const tx = await tokenContract.approve(CONTRACT_ADDRESS, amountToApprove);
-            document.getElementById("statusBox").innerText = "⏳ جاري تسجيل صلاحية الحرق على الشبكة، انتظر ثوانٍ...";
             await tx.wait();
 
-            document.getElementById("statusBox").innerText = "✅ تم تفعيل قفل الأمان وصلاحية التوكن بنجاح! يمكنك الآن تنفيذ كل عمليات اللعبة حية.";
-            alert("⚡️ تم التفعيل بنجاح! عقود الحرق والنجاة جاهزة للعمل الحقيقي الآن.");
+            document.getElementById("approveBtn").innerText = "✅ تم تفعيل قفل الأمان";
+            document.getElementById("approveBtn").style.background = "#00876c";
+            alert("⚡️ تم التفعيل بنجاح! عقود الحرق والنجاة جاهزة للعمل الحقيقي الآن، يمكنك اختيار طور اللعب.");
         } catch (err) {
-            document.getElementById("statusBox").innerText = `❌ فشلت عملية الموافقة: ${err.message || err}`;
+            alert(`❌ فشلت عملية الموافقة: ${err.message || err}`);
         }
     }
 
     function enterHub(mode) {
         if (!walletAddress) { 
-            alert("يجب ربط المحفظة لتشلفر هويتك الرقمية أولاً!"); 
+            alert("يجب ربط المحفظة لتشفير هويتك الرقمية أولاً!"); 
             return; 
         }
         document.getElementById("startScreen").classList.add("hidden");
@@ -191,7 +186,6 @@
         }
     }
 
-    // 4. دالة شراء العناصر (تلقائياً مستقرة ومحمية الآن)
     async function triggerSurvivalContract(itemType) {
         if (!window.ethereum || !walletAddress) {
             alert("المحفظة غير متصلة!");
@@ -219,13 +213,12 @@
         }
     }
 
-    // 5. دالة تنفيذ طلقة القناص وحرق 5,000 توكن
     async function executeLiveAssassination() {
         if (!window.ethereum || !walletAddress) {
             alert("المحفظة غير متصلة!");
             return;
         }
-        document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=600&q=80";
+        document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80";
         document.getElementById("overlayLabel").innerText = "موقع الحدث: محطة القطار السريع - لحظة اختراق رصاصة القناص للهدف";
 
         try {
@@ -247,11 +240,11 @@
 
     function armoryAction(action) {
         if (action === "silencer") {
-            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=600&q=80";
+            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&q=80";
             document.getElementById("overlayLabel").innerText = "طاولة الترسانة: جاري تركيب وفحص كاتم الصوت عالي التردد لبندقية القنص";
             document.getElementById("statusBox").innerText = "🔇 غرفة الأسلحة: تم دمج كواتم الصوت الميكانيكية وتجهيز الذخيرة التكتيكية.";
         } else {
-            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80";
+            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=600&q=80";
             document.getElementById("overlayLabel").innerText = "غرفة المراقبة: فحص قنوات الاتصال وتفعيل جدران حماية التشفير للشبكة";
             document.getElementById("statusBox").innerText = "💻 منظومة التأمين: شريكتك تقوم الآن بمسح الترددات لمنع عمليات الرصد أو التعقب الفيدرالي.";
         }
@@ -260,15 +253,15 @@
     function escapeAction(type) {
         heat = 10;
         if (type === "moto") {
-            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=600&q=80";
+            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80";
             document.getElementById("overlayLabel").innerText = "مسار الهروب أ: الشوارع العامة باستخدام دراجة عسكرية مظلمة";
             document.getElementById("statusBox").innerText = "🏍️ هروب سريع: انطلقت الدراجة لتأمين موقعك وخفض مؤشر الرصد الفيدرالي.";
         } else if (type === "boat") {
-            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80";
+            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80";
             document.getElementById("overlayLabel").innerText = "مسار الهروب ب: الرصيف المائي - قارب كوماندوز تكتيكي سريع";
             document.getElementById("statusBox").innerText = "🛥️ الهروب البحري: شق القارب السريع أمواج البحر المظلمة متخفياً وسط الضباب.";
         } else {
-            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80";
+            document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=600&q=80";
             document.getElementById("overlayLabel").innerText = "مسار الهروب ج: مروحية إجلاء عسكرية هجومية سوداء";
             document.getElementById("statusBox").innerText = "🚁 الإخلاء الجوي الأقصى: أقلعت مروحية الإجلاء مخترقة السحاب لتعلن نجاح خطة النجاة.";
         }
