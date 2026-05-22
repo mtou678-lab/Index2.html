@@ -108,20 +108,48 @@
 </div>
 
 <script>
+    // 1. ضع هنا عنوان العقد الجديد الذي ظهر لك في Remix (تحت Deployed Contracts)
     const CONTRACT_ADDRESS = "0x3E71427c4F4c3aE6DBA472Ccb17076E2148A1231"; 
+    // 2. عنوان توكن $SINU على شبكة Base
     const SINU_TOKEN_ADDRESS = "0x56bB247c424958948B63de291A0C7f45d8651B76"; 
 
+    // 3. الـ ABI الرسمي والنظيف الذي أرسلته من Remix كاملاً وبدون أي تعديل
     const CONTRACT_ABI = [
         {"inputs":[{"internalType":"address","name":"_sinuTokenAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},
-        {"inputs":[],"name":"acceptAndFight","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"OwnableInvalidOwner","type":"error"},
+        {"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"OwnableUnauthorizedAccount","type":"error"},
+        {"inputs":[],"name":"ReentrancyGuardReentrantCall","type":"error"},
+        {"inputs":[{"internalType":"address","name":"token","type":"address"}],"name":"SafeERC20FailedOperation","type":"error"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"challengeId","type":"uint256"},{"indexed":true,"internalType":"address","name":"winner","type":"address"},{"indexed":true,"internalType":"address","name":"loser","type":"address"},{"indexed":false,"internalType":"uint256","name":"prizeWon","type":"uint256"}],"name":"BattleResolved","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"challengeId","type":"uint256"},{"indexed":true,"internalType":"address","name":"creator","type":"address"},{"indexed":true,"internalType":"address","name":"target","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BountyCreated","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"player","type":"address"},{"indexed":false,"internalType":"uint256","name":"burnedAmount","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"randomOutcome","type":"uint256"}],"name":"PveHitExecuted","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"player","type":"address"},{"indexed":false,"internalType":"string","name":"itemType","type":"string"},{"indexed":false,"internalType":"uint256","name":"tokensBurned","type":"uint256"}],"name":"SurvivalUsed","type":"event"},
+        {"inputs":[],"name":"BURN_ADDRESS","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_challengeId","type":"uint256"}],"name":"acceptAndFight","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_burnFee","type":"uint256"},{"internalType":"uint256","name":"_devFee","type":"uint256"}],"name":"adjustFees","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"_hitBurn","type":"uint256"},{"internalType":"uint256","name":"_adrenaline","type":"uint256"},{"internalType":"uint256","name":"_smoke","type":"uint256"}],"name":"adjustPveCosts","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"adrenalineCost","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"burnFeePercent","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
         {"inputs":[{"internalType":"uint256","name":"_itemType","type":"uint256"}],"name":"buySurvivalItem","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"challengeCounter","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"challenges","outputs":[{"internalType":"address","name":"creator","type":"address"},{"internalType":"address","name":"target","type":"address"},{"internalType":"uint256","name":"bountyAmount","type":"uint256"},{"internalType":"bool","name":"isAccepted","type":"bool"},{"internalType":"bool","name":"isResolved","type":"bool"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"_target","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"createBountyChallenge","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"devFeePercent","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},
         {"inputs":[],"name":"executePveAssassination","outputs":[],"stateMutability":"nonpayable","type":"function"},
-        {"inputs":[{"internalType":"address","name":"_target","type":"address"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"createBountyChallenge","outputs":[],"stateMutability":"nonpayable","type":"function"}
+        {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"pveAssassinationBurn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"sinuToken","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"smokeBombCost","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"--------------":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"}
     ];
 
     let walletAddress = null;
     let health = 100; let armor = 100; let heat = 10; let totalBurned = 145230;
 
+    // دالة الربط المستقرة
     async function connectWallet() {
         if (window.ethereum) {
             try {
@@ -129,33 +157,24 @@
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 walletAddress = accounts[0];
                 
-                const network = await provider.getNetwork();
-                const chainId = network.chainId;
-
                 document.getElementById("connectWalletBtn").innerText = `✅ الهوية مشفرة: ${walletAddress.substring(0, 10)}...`;
                 document.getElementById("connectWalletBtn").style.background = "#00876c";
-                alert("🔗 تم ربط محفظتك بنجاح! تذكر تفعيل قفل الأمان أولاً قبل دخول طور اللعب.");
+                alert("🔗 تم ربط محفظتك بنجاح على شبكة Base! اضغط زر التفعيل لتجهيز الغاز.");
             } catch (e) {
-                alert("تم رفض التوقيع وتفعيل المحفظة.");
+                alert("تم رفض الاتصال.");
             }
         } else {
-            alert("⚠️ لم يتم رصد أي محفظة مشفرة! يرجى فتح هذا الرابط من داخل متصفح تطبيق Trust Wallet أو MetaMask.");
+            alert("⚠️ يرجى فتح اللعبة من داخل متصفح محفظتك.");
         }
     }
 
+    // دالة الموافقة لتفعيل قفل الحرق
     async function approveSinuToken() {
-        if (!window.ethereum || !walletAddress) {
-            alert("يرجى ربط المحفظة أولاً بتشفير الهوية!");
-            return;
-        }
+        if (!window.ethereum || !walletAddress) { alert("يرجى ربط المحفظة أولاً!"); return; }
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
-            
-            const erc20Abi = [
-                "function approve(address spender, uint256 amount) public returns (bool)"
-            ];
-            
+            const erc20Abi = ["function approve(address spender, uint256 amount) public returns (bool)"];
             const tokenContract = new ethers.Contract(SINU_TOKEN_ADDRESS, erc20Abi, signer);
             const amountToApprove = ethers.utils.parseUnits("100000000", 18); 
             
@@ -164,89 +183,84 @@
 
             document.getElementById("approveBtn").innerText = "✅ تم تفعيل قفل الأمان";
             document.getElementById("approveBtn").style.background = "#00876c";
-            alert("⚡️ تم التفعيل بنجاح! عقود الحرق والنجاة جاهزة للعمل الحقيقي الآن، يمكنك اختيار طور اللعب.");
+            alert("⚡️ تم تفعيل العقود! يمكنك الآن دخول طور اللعب والتنفيذ.");
         } catch (err) {
-            alert(`❌ فشلت عملية الموافقة: ${err.message || err}`);
+            alert(`❌ فشل التفعيل: ${err.message || err}`);
         }
     }
 
+    // دالة الانتقال السليم وشق الشاشة السوداء
     function enterHub(mode) {
-        if (!walletAddress) { 
-            alert("يجب ربط المحفظة لتشفير هويتك الرقمية أولاً!"); 
-            return; 
-        }
+        if (!walletAddress) { alert("يجب ربط المحفظة أولاً!"); return; }
         document.getElementById("startScreen").classList.add("hidden");
         document.getElementById("syndicateHubScreen").classList.remove("hidden");
+        
         if(mode === "PVP") {
-            document.getElementById("hudTitle").innerText = "⚔️ شبكة صراع القتلة (PvP)";
-            document.getElementById("statusBox").innerText = "⚔️ تم دخول نفق صراع القتلة الحيين. بانتظار عقود التحدي لاعب ضد لاعب.";
+            document.getElementById("hudTitle").innerText = "⚔️ صراع القتلة (PvP)";
+            document.getElementById("statusBox").innerText = "⚔️ نفق الـ PvP نشط ومستعد لعقود التحدي الحية.";
         } else {
             document.getElementById("hudTitle").innerText = "🏆 إرث روبرت راث (PvE)";
-            document.getElementById("statusBox").innerText = "🎬 ملف روبرت راث نشط. الأوامر ستنفذ سحب وحرق حقيقي من رصيدك.";
+            document.getElementById("statusBox").innerText = "🎬 طور الـ PvE نشط. العمليات ستنفذ حرق حقيقي من رصيدك على Base.";
         }
+        updateBars();
     }
 
+    // دالة شراء العناصر (معدلة ومحمية بالـ Signer لمنع انهيار الشاشة)
     async function triggerSurvivalContract(itemType) {
-        if (!window.ethereum || !walletAddress) {
-            alert("المحفظة غير متصلة!");
-            return;
-        }
+        if (!window.ethereum || !walletAddress) { alert("المحفظة غير متصلة!"); return; }
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-            document.getElementById("statusBox").innerText = "⏳ بانتظار توقيع المعاملة وخصم الرسوم وحرق التوكن من محفظتك...";
+            
+            document.getElementById("statusBox").innerText = "⏳ جاري توقيع المعاملة على شبكة Base وحرق التوكن...";
             
             const tx = await contract.buySurvivalItem(itemType);
             await tx.wait();
 
             if (itemType === 1) {
                 health = Math.min(health + 30, 100); totalBurned += 500;
-                document.getElementById("statusBox").innerText = "💉 تم تأكيد المعاملة! حقنت الأدرينالين وتجددت صحتك الحيوية بعد حرق 500 $SINU.";
+                document.getElementById("statusBox").innerText = "💉 تم الحرق بنجاح! استعدت صحتك بحقنة الأدرينالين (500 توكن).";
             } else {
                 heat = Math.max(heat - 40, 10); totalBurned += 300;
-                document.getElementById("statusBox").innerText = "💨 تم تأكيد المعاملة! فجّرت قنبلة الدخان لتضليل الرادارات وحرق 300 $SINU.";
+                document.getElementById("statusBox").innerText = "💨 تم الحرق بنجاح! فجّرت قنبلة الدخان لتضليل الرادار (300 توكن).";
             }
             updateBars();
         } catch (err) { 
-            document.getElementById("statusBox").innerText = `❌ فشلت العملية (تأكد من تفعيل زر الصلاحية أولاً): ${err.message || err}`; 
+            document.getElementById("statusBox").innerText = `❌ فشلت المعاملة: تأكد من تفعيل الصلاحية (Approve) أولاً.`; 
         }
     }
 
+    // دالة طلقة القتل الفوري وحرق 5,000 توكن
     async function executeLiveAssassination() {
-        if (!window.ethereum || !walletAddress) {
-            alert("المحفظة غير متصلة!");
-            return;
-        }
-        document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80";
-        document.getElementById("overlayLabel").innerText = "موقع الحدث: محطة القطار السريع - لحظة اختراق رصاصة القناص للهدف";
-
+        if (!window.ethereum || !walletAddress) { alert("المحفظة غير متصلة!"); return; }
         try {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const signer = provider.getSigner();
             const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-            document.getElementById("statusBox").innerText = "⏳ طلقة القناص جاهزة. يرجى تأكيد المعاملة لتنفيذ أمر الحرق الكلي لـ 5,000 توكن...";
+            
+            document.getElementById("statusBox").innerText = "⏳ طلقة القناص جاهزة للتوقيع... جاري إرسال المعاملة.";
 
             const tx = await contract.executePveAssassination();
             await tx.wait();
 
             totalBurned += 5000; heat = Math.min(heat + 30, 100); armor = Math.max(armor - 25, 0);
-            document.getElementById("statusBox").innerText = "🎯 تم تأكيد المعاملة بنجاح! قنص القاتل الأول الهدف وتم تدمير 5,000 $SINU نهائياً!";
+            document.getElementById("statusBox").innerText = "🎯 ضربة ناجحة! تم تنفيذ التصفية وحرق 5,000 توكن $SINU بالتمام والكمال!";
             updateBars();
         } catch (err) { 
-            document.getElementById("statusBox").innerText = `❌ تم إلغاء الأمر أو رفض التوقيع: ${err.message || err}`; 
+            document.getElementById("statusBox").innerText = `❌ تم إلغاء الأمر أو فشل التنفيذ: ${err.message || err}`; 
         }
     }
 
     function armoryAction(action) {
         if (action === "silencer") {
             document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&q=80";
-            document.getElementById("overlayLabel").innerText = "طاولة الترسانة: جاري تركيب وفحص كاتم الصوت عالي التردد لبندقية القنص";
-            document.getElementById("statusBox").innerText = "🔇 غرفة الأسلحة: تم دمج كواتم الصوت الميكانيكية وتجهيز الذخيرة التكتيكية.";
+            document.getElementById("overlayLabel").innerText = "طاولة الترسانة: جاري تركيب وفحص كاتم الصوت لبندقية القنص";
+            document.getElementById("statusBox").innerText = "🔇 تم تجهيز كاتم الصوت الميكانيكي للبندقية بنجاح.";
         } else {
             document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=600&q=80";
-            document.getElementById("overlayLabel").innerText = "غرفة المراقبة: فحص قنوات الاتصال وتفعيل جدران حماية التشفير للشبكة";
-            document.getElementById("statusBox").innerText = "💻 منظومة التأمين: شريكتك تقوم الآن بمسح الترددات لمنع عمليات الرصد أو التعقب الفيدرالي.";
+            document.getElementById("overlayLabel").innerText = "غرفة المراقبة: تفعيل جدران حماية التشفير للشبكة";
+            document.getElementById("statusBox").innerText = "💻 منظومة التأمين: جاري تشفير الترددات لمنع عمليات التعقب الفيدرالي.";
         }
     }
 
@@ -254,16 +268,16 @@
         heat = 10;
         if (type === "moto") {
             document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=600&q=80";
-            document.getElementById("overlayLabel").innerText = "مسار الهروب أ: الشوارع العامة باستخدام دراجة عسكرية مظلمة";
-            document.getElementById("statusBox").innerText = "🏍️ هروب سريع: انطلقت الدراجة لتأمين موقعك وخفض مؤشر الرصد الفيدرالي.";
+            document.getElementById("overlayLabel").innerText = "مسار الهروب: الشوارع العامة باستخدام دراجة عسكرية";
+            document.getElementById("statusBox").innerText = "🏍️ هروب سريع: انطلقت الدراجة وتراجع مؤشر الرصد الفيدرالي.";
         } else if (type === "boat") {
             document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80";
-            document.getElementById("overlayLabel").innerText = "مسار الهروب ب: الرصيف المائي - قارب كوماندوز تكتيكي سريع";
-            document.getElementById("statusBox").innerText = "🛥️ الهروب البحري: شق القارب السريع أمواج البحر المظلمة متخفياً وسط الضباب.";
+            document.getElementById("overlayLabel").innerText = "مسار الهروب: قارب كوماندوز تكتيكي سريع وسط الضباب";
+            document.getElementById("statusBox").innerText = "🛥️ الهروب البحري: شق القارب السريع أمواج البحر بنجاح.";
         } else {
             document.getElementById("screenImg").src = "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=600&q=80";
-            document.getElementById("overlayLabel").innerText = "مسار الهروب ج: مروحية إجلاء عسكرية هجومية سوداء";
-            document.getElementById("statusBox").innerText = "🚁 الإخلاء الجوي الأقصى: أقلعت مروحية الإجلاء مخترقة السحاب لتعلن نجاح خطة النجاة.";
+            document.getElementById("overlayLabel").innerText = "مسار الهروب: مروحية إجلاء عسكرية هجومية سوداء";
+            document.getElementById("statusBox").innerText = "🚁 الإخلاء الجوي الأقصى: أقلعت المروحية مخترقة السحاب معلنة النجاة.";
         }
         updateBars();
     }
